@@ -1,5 +1,5 @@
 # GPT-UI
-An easy to use client GUI for H2OGPT servers. Made by one person in a couple of weeks. 1000+ lines of code with a short story included somewhere in the source code, go find it (it's the past problem one).
+An easy to use client GUI for H2OGPT servers.
 
 ## Features
 - Multi-threading
@@ -31,8 +31,8 @@ Screenshot of GPT-UI
 
 ### Build
 1. Navigate to the GPT-UI directory (The one with a Cargo.toml file and a src/ directory)
-2. Run the command "cargo r" WITHOUT THE QUOTATION MARKS. \
-Or "cargo r --release" WITHOUT THE QUOTATION MARKS to run it with optimizations.
+2. Run the command "cargo r" \
+Or "cargo r --release" to run it with optimizations.
 
 You can find more cargo commands with the "cargo --help" command.
 
@@ -43,12 +43,11 @@ Then open the settings and set you settings there. Put your H2OGPT server's ip a
 Byt defult, the ip address is the loopback address (127.0.0.1).\
 If the app cannot connect to a server when sending a message, it will tell you that it failed.
 
-## A Story
-Read if bored or something.
+## Current state
+There are known bugs in the GUI part, and I will fix them when I find time for it.
 
-I setup a [H2OGPT](https://github.com/h2oai/h2ogpt) app to a virtual server. 
-But it's sloooow, really slooooooooow. 
-Turns out that the CPU isn't powerful enough, we need a GPU for it to be faster. We didn't have a GPU, and those are EXPENSIVE (about 3k). 
-And we didn't know which one to buy, there are many GPUs to choose from. And I can't progress with AI stuff without the GPU.\
-So in the mean time, I decided to make this project and learn new stuff. While developing this application, we decided on a GPU and ordered it.\
-As of writing this, I'm still waiting for the GPU to arrive so I can do more AI stuff. It's 2024/05/13 10.17 AM.
+## Contribution
+Contributions are welcome, please note that this repository uses the Unlicense.
+
+## 3rd party library licenses
+This project uses several third-party libraries. The licenses and copyright notices for these libraries can be found in the `third_party` directory.
