@@ -30,8 +30,9 @@ Screenshot of GPT-UI
 - The source code, of course. How'd you think, you could build the source code, without the source code.
 
 ### Build
-1. Navigate to the GPT-UI directory (The one with a Cargo.toml file and a src/ directory)
-2. Run the command "cargo r" \
+1. Clone the repository
+2. Navigate to the GPT-UI directory (The one with a Cargo.toml file and a src/ directory)
+3. Run the command "cargo r" \
 Or "cargo r --release" to run it with optimizations.
 
 You can find more cargo commands with the "cargo --help" command.
