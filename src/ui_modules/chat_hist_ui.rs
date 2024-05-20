@@ -1,0 +1,92 @@
+use crate::ui_modules::settings_ui::show_settings;
+use crate::Conversation;
+use crate::GptUi;
+
+use egui::{Button, Vec2};
+
+/// Chat history UI
+pub fn show_chat_history(ctx: &egui::Context, ui: &mut egui::Ui, ui_data: &mut GptUi) {
+    ui.vertical(|ui| {
+        ui.horizontal(|ui| {
+            if ui.button("New Chat").clicked() {
+                ui_data.conversations.push(Conversation::default());
+                ui_data.selected_conversation_index = ui_data.conversations.len() - 1;
+                ui_data.conversation_selected = true;
+            }
+
+            if ui.button("Load From File").clicked() {
+                if let Some(paths) = rfd::FileDialog::new()
+                    .add_filter("json", &["json"])
+                    .set_title("Load Conversation From File")
+                    .pick_files()
+                {
+                    for path in paths {
+                        let conv = Conversation::load_from_file(path.clone(), true);
+                        ui_data.conversations.push(conv);
+                        ui_data.selected_conversation_index = ui_data.conversations.len() - 1;
+                        ui_data.conversation_selected = true;
+                    }
+                }
+            }
+        });
+
+        // Chat history scroll area
+        ui.label("Chat History");
+        egui::ScrollArea::vertical()
+            .drag_to_scroll(true)
+            .auto_shrink(false)
+            .max_height(ui.available_height())
+            .show(ui, |ui| {
+                // Counter for conversation index.
+                let mut conv_index = 0;
+
+                for conv in &ui_data.conversations {
+                    let conv_button_size = Vec2 {
+                        x: ui.available_width(),
+                        y: 40.0,
+                    };
+
+                    let button_text: String;
+
+                    if conv.title == "unnamed" {
+                        button_text = format!("{}{}", conv.title, conv_index.to_string());
+                    } else {
+                        button_text = conv.title.to_owned();
+                    }
+
+                    if ui
+                        .add_sized(conv_button_size, Button::new(button_text))
+                        .clicked()
+                    {
+                        if ui_data.conversation_selected
+                            && ui_data.selected_conversation_index == conv_index
+                        {
+                            ui_data.conversation_selected = false;
+                        } else {
+                            ui_data.selected_conversation_index = conv_index;
+                            ui_data.conversation_selected = true;
+                        }
+                    }
+
+                    conv_index += 1;
+                }
+            });
+
+            ui.add_space(20.0);
+            
+        // Quick settings for quickly setting settings, like theme
+        egui::TopBottomPanel::bottom("quick_settings")
+            .min_height(20.0)
+            .show(ctx, |ui| {
+                ui.horizontal_centered(|ui| {
+                    if ui.button("Settings").clicked() {
+                        ui_data.show_settings_ui = true;
+                    }
+                });
+            });
+    });
+
+    if ui_data.show_settings_ui {
+        show_settings(ctx, ui, ui_data);
+    }
+}
