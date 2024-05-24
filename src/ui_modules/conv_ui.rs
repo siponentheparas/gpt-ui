@@ -28,7 +28,9 @@ pub fn show_conversation(ctx: &egui::Context, ui: &mut egui::Ui, ui_data: &mut G
             }
 
             egui::ScrollArea::vertical()
-                .max_height(ui.available_height())
+                // The height of the bottom panel has to be reduced from the availalbe height. 
+                // Otherwise the scrollarea will go under the bottom panel.
+                .max_height(ui.available_height() - 60.0)
                 .max_width(ui.available_width())
                 .show(ui, |ui| {
                     for msg in &conv.messages {

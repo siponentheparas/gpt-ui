@@ -35,7 +35,9 @@ pub fn show_chat_history(ctx: &egui::Context, ui: &mut egui::Ui, ui_data: &mut G
         egui::ScrollArea::vertical()
             .drag_to_scroll(true)
             .auto_shrink(false)
-            .max_height(ui.available_height())
+            // The height of the bottom panel has to be reduced from the availalbe height. 
+            // Otherwise the scrollarea will go under the bottom panel.
+            .max_height(ui.available_height() - 20.0)
             .show(ui, |ui| {
                 // Counter for conversation index.
                 let mut conv_index = 0;
@@ -72,8 +74,6 @@ pub fn show_chat_history(ctx: &egui::Context, ui: &mut egui::Ui, ui_data: &mut G
                 }
             });
 
-            ui.add_space(20.0);
-            
         // Quick settings for quickly setting settings, like theme
         egui::TopBottomPanel::bottom("quick_settings")
             .min_height(20.0)
