@@ -120,7 +120,6 @@ pub fn show_conversation(ctx: &egui::Context, ui: &mut egui::Ui, ui_data: &mut G
 
             egui::TopBottomPanel::bottom("input field panel")
                 .min_height(60.0)
-                .max_height(60.0)
                 .show(ctx, |ui| {
                     ui.horizontal(|ui| {
                         ui.vertical(|ui| {
