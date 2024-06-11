@@ -41,7 +41,7 @@ You can find more cargo commands with the "cargo --help" command.
 First, you need a [H2OGPT](https://github.com/h2oai/h2ogpt) server to connect to.
 
 Then open the settings and set you settings there. Put your H2OGPT server's ip and port in there.\
-Byt defult, the ip address is the loopback address (127.0.0.1).\
+By default, the ip address is the loopback address (127.0.0.1).\
 If the app cannot connect to a server when sending a message, it will tell you that it failed.
 
 ## Current state
