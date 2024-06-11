@@ -10,7 +10,14 @@ pub fn show_conversation(ctx: &egui::Context, ui: &mut egui::Ui, ui_data: &mut G
     if ui_data.conversations.len() > 0 && ui_data.conversation_selected {
         ui.vertical_centered_justified(|ui| {
             let conv_index = ui_data.selected_conversation_index;
-            let conv = &mut ui_data.conversations[conv_index];
+            let conv;
+            
+            if conv_index < ui_data.conversations.len() {
+                conv = &mut ui_data.conversations[conv_index];
+            } else {
+                conv = &mut ui_data.conversations[conv_index - 1];
+                ui_data.selected_conversation_index = conv_index - 1;
+            }
 
             if conv.show_delete_conv_ui {
                 show_conv_delete(&ctx, conv);
