@@ -1,6 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 
 mod conversation;
+mod list;
 mod save_load;
 mod ui_modules;
 mod user_settings;
