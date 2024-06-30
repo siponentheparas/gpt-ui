@@ -14,7 +14,11 @@ pub fn show_settings(ctx: &egui::Context, _ui: &mut egui::Ui, ui_data: &mut GptU
             ui.add_space(15.0);
 
             let save_location_label = ui.label("Conversation Save Location");
-            if ui.button("Change").labelled_by(save_location_label.id).clicked() {
+            if ui
+                .button("Change")
+                .labelled_by(save_location_label.id)
+                .clicked()
+            {
                 if let Some(path) = rfd::FileDialog::new()
                     .set_title("Change Save Location")
                     .set_directory(ui_data.user_settings.conv_save_location.clone())

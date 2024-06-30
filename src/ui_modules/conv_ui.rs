@@ -7,11 +7,11 @@ use super::rename_conv_ui::show_rename_conv;
 
 /// conv UI
 pub fn show_conversation(ctx: &egui::Context, ui: &mut egui::Ui, ui_data: &mut GptUi) {
-    if ui_data.conversations.len() > 0 && ui_data.conversation_selected {
+    if !ui_data.conversations.is_empty() && ui_data.conversation_selected {
         ui.vertical_centered_justified(|ui| {
             let conv_index = ui_data.selected_conversation_index;
             let conv;
-            
+
             if conv_index < ui_data.conversations.len() {
                 conv = &mut ui_data.conversations[conv_index];
             } else {
@@ -20,7 +20,7 @@ pub fn show_conversation(ctx: &egui::Context, ui: &mut egui::Ui, ui_data: &mut G
             }
 
             if conv.show_delete_conv_ui {
-                show_conv_delete(&ctx, conv);
+                show_conv_delete(ctx, conv);
             }
 
             let sender: String;
@@ -35,7 +35,7 @@ pub fn show_conversation(ctx: &egui::Context, ui: &mut egui::Ui, ui_data: &mut G
             }
 
             egui::ScrollArea::vertical()
-                // The height of the bottom panel has to be reduced from the availalbe height. 
+                // The height of the bottom panel has to be reduced from the availalbe height.
                 // Otherwise the scrollarea will go under the bottom panel.
                 .max_height(ui.available_height() - 60.0)
                 .max_width(ui.available_width())
@@ -58,13 +58,12 @@ pub fn show_conversation(ctx: &egui::Context, ui: &mut egui::Ui, ui_data: &mut G
                         }
 
                         // dark/white theme to message background.
-                        let msg_bgr: Color32;
 
-                        if ui_data.user_settings.dark_theme {
-                            msg_bgr = Color32::BLACK;
+                        let msg_bgr = if ui_data.user_settings.dark_theme {
+                            Color32::BLACK
                         } else {
-                            msg_bgr = Color32::LIGHT_GRAY;
-                        }
+                            Color32::LIGHT_GRAY
+                        };
 
                         ui.style_mut().spacing.item_spacing = Vec2 { x: 0.0, y: 30.0 };
 
@@ -105,9 +104,11 @@ pub fn show_conversation(ctx: &egui::Context, ui: &mut egui::Ui, ui_data: &mut G
 
             let mut send_error_message: String = "".to_owned();
 
+            #[allow(clippy::needless_bool_assign)]
             if conv.pre_query_entered
                 && !conv.generating
-                && (conv.messages.len() > 0 && conv.messages[conv.messages.len() - 1].role == "user")
+                && (!conv.messages.is_empty()
+                    && conv.messages[conv.messages.len() - 1].role == "user")
             {
                 send_button_enabled = true;
                 send_error_message =
@@ -167,7 +168,7 @@ pub fn show_conversation(ctx: &egui::Context, ui: &mut egui::Ui, ui_data: &mut G
                             }
 
                             if conv.show_rename_conv_ui {
-                                show_rename_conv(&ctx, ui, conv);
+                                show_rename_conv(ctx, ui, conv);
                             }
 
                             if ui.button("Delete").clicked() {

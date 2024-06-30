@@ -65,10 +65,10 @@ impl UserSettings {
                     .join("gpt-ui_user_settings.json")
                     .to_string_lossy()
             );
-            return Some(settings);
+            Some(settings)
         } else {
             println!("Did not find user settings file");
-            return None;
+            None
         }
     }
 }

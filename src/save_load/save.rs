@@ -8,7 +8,10 @@ pub fn save_all(ui_data: &mut GptUi) {
 
     for conv in ui_data.conversations.clone() {
         if let Err(e) = save_conversation(conv.clone(), ui_data) {
-            eprintln!("Error while saving conversation with title \"{}\"\n{}", conv.title, e);
+            eprintln!(
+                "Error while saving conversation with title \"{}\"\n{}",
+                conv.title, e
+            );
         }
     }
 }
@@ -38,15 +41,14 @@ pub fn save_conversation(mut conv: Conversation, ui_data: &mut GptUi) -> Result<
 
         let conv_save_location = ui_data.user_settings.conv_save_location.clone();
 
-        if conv_path != conv_save_location{
+        if conv_path != conv_save_location {
             conv.file_path = Some(conv_save_location.join(file_name));
         }
     }
-    
 
     if let Some(file_path) = conv.file_path.clone() {
         conv.clone().save_to_file(file_path);
-        return Ok(true);
+        Ok(true)
     } else {
         let title = conv.title.clone();
         let file_path = path.join(format!("{}.json", title));
@@ -68,19 +70,14 @@ pub fn save_conversation(mut conv: Conversation, ui_data: &mut GptUi) -> Result<
                         }
                     });
 
-                    let save_file_name = format!(
-                        "{}{}.json",
-                        conv.title.clone(),
-                        same_name_file_count.to_string()
-                    );
+                    let save_file_name =
+                        format!("{}{}.json", conv.title.clone(), same_name_file_count);
                     conv.clone().save_to_file(path.join(save_file_name));
                 }
 
-                return Ok(true);
+                Ok(true)
             }
-            Err(e) => {
-                return Err(e.to_string());
-            }
+            Err(e) => Err(e.to_string()),
         }
     }
 }

@@ -1,18 +1,18 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 
 mod conversation;
+mod save_load;
 mod ui_modules;
 mod user_settings;
-mod save_load;
 
 use std::sync::mpsc::{Receiver, Sender};
 
 use conversation::{Conversation, Message};
 use eframe::egui;
+use save_load::load::load_all;
+use save_load::save::save_all;
 use ui_modules::{chat_hist_ui, conv_ui};
 use user_settings::UserSettings;
-use save_load::save::save_all;
-use save_load::load::load_all;
 
 fn main() -> Result<(), eframe::Error> {
     let options = eframe::NativeOptions {

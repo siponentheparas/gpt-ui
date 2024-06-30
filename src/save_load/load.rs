@@ -1,7 +1,7 @@
 use std::fs;
 
-use crate::GptUi;
 use crate::conversation::Conversation;
+use crate::GptUi;
 
 pub fn load_all(ui_data: &mut GptUi) {
     let path = ui_data.user_settings.conv_save_location.clone();

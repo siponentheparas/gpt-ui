@@ -35,26 +35,25 @@ pub fn show_chat_history(ctx: &egui::Context, ui: &mut egui::Ui, ui_data: &mut G
         egui::ScrollArea::vertical()
             .drag_to_scroll(true)
             .auto_shrink(false)
-            // The height of the bottom panel has to be reduced from the availalbe height. 
+            // The height of the bottom panel has to be reduced from the availalbe height.
             // Otherwise the scrollarea will go under the bottom panel.
             .max_height(ui.available_height() - 20.0)
             .show(ui, |ui| {
                 // Counter for conversation index.
                 let mut conv_index = 0;
 
+                #[allow(clippy::explicit_counter_loop)]
                 for conv in &ui_data.conversations {
                     let conv_button_size = Vec2 {
                         x: ui.available_width(),
                         y: 40.0,
                     };
 
-                    let button_text: String;
-
-                    if conv.title == "unnamed" {
-                        button_text = format!("{}{}", conv.title, conv_index.to_string());
+                    let button_text = if conv.title == "unnamed" {
+                        format!("{}{}", conv.title, conv_index)
                     } else {
-                        button_text = conv.title.to_owned();
-                    }
+                        conv.title.to_owned()
+                    };
 
                     if ui
                         .add_sized(conv_button_size, Button::new(button_text))

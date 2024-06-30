@@ -64,7 +64,7 @@ pub struct Conversation {
 
 impl Default for Conversation {
     fn default() -> Self {
-        return Self {
+        Self {
             title: "unnamed".to_owned(),
             messages: vec![],
             pre_query_entered: false,
@@ -79,7 +79,7 @@ impl Default for Conversation {
             temperature: 0,
             seed: rand::thread_rng().gen_range(1000..=9999),
             max_output_lenght: 5120,
-        };
+        }
     }
 }
 
@@ -87,11 +87,11 @@ impl Conversation {
     #[allow(dead_code)]
     /// Create new conversation.
     pub fn new(messages: Vec<Message>, pre_query_entered: bool) -> Self {
-        return Self {
+        Self {
             messages,
             pre_query_entered,
             ..Default::default()
-        };
+        }
     }
 
     /// Adds a message to the conversation
@@ -107,7 +107,7 @@ impl Conversation {
             return self;
         }
         self.messages.push(Message::new(role, content));
-        return self;
+        self
     }
 
     /// Send the conversation to the AI to generate a response.
@@ -126,13 +126,12 @@ impl Conversation {
         //
         // This is a horrible fix.
         // TODO: Find a better fix for this
-        let last_sender: &String;
 
-        if self.messages.len() > 0 {
-            last_sender = &self.messages[self.messages.len() - 1].role;
+        let last_sender = if !self.messages.is_empty() {
+            &self.messages[self.messages.len() - 1].role
         } else {
             return;
-        }
+        };
 
         // If last sender is "user" then proceed with sending, otherwise do nothing.
 
@@ -192,7 +191,7 @@ impl Conversation {
     /// If the first [Message] is a system message then return the [Message]
     /// If not, then return a system role [`Option<&Message>`] with empty content
     pub fn get_pre_query_message(&self) -> Option<&Message> {
-        if self.messages.len() > 0 {
+        if !self.messages.is_empty() {
             let first_message = &self.messages[0];
 
             if first_message.role == "system" {
@@ -200,7 +199,7 @@ impl Conversation {
             }
         }
 
-        return None;
+        None
     }
 
     pub fn load_from_file(file_path: PathBuf, is_import: bool) -> Conversation {
@@ -226,7 +225,7 @@ impl Conversation {
             last_two_string.join("/")
         );
 
-        return conv;
+        conv
     }
 
     pub fn save_to_file(self, file_path: PathBuf) -> Self {
@@ -245,7 +244,7 @@ impl Conversation {
 
         println!("Saved conversation to file: {}", last_two_string.join("/"));
 
-        return self;
+        self
     }
 }
 
@@ -261,7 +260,7 @@ pub struct Message {
 impl Message {
     /// Craete new message with role and content.
     fn new(role: String, content: String) -> Self {
-        return Self { role, content };
+        Self { role, content }
     }
 }
 
