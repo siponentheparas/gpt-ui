@@ -8,6 +8,7 @@ use std::{
 use rand::Rng;
 use reqwest::header;
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 use crate::user_settings::ServerAddress;
 
@@ -34,7 +35,7 @@ pub struct Conversation {
 
     /// The text that is inside the users input field.
     /// Stored here so the input field wont clear if user wants to visit different conversations.
-    /// Also this is saved to file, so if program crashes or user quits the program, the input field text will be loaded from file.
+    /// Also this is saved to file, so if user quits the program, the input field text will be loaded from file.
     pub editor_text: String,
 
     /// [Conversation]'s filepath if it's saved
@@ -56,6 +57,9 @@ pub struct Conversation {
     /// Input text from the renaming window, to later put into title, or discard if cancelled.
     pub rename_text: String,
 
+    /// A unique id to conversations. Used to determine which list the conversation belongs to.
+    pub uuid: Uuid,
+
     max_tokens: i32,
     temperature: i32,
     seed: i32,
@@ -75,6 +79,7 @@ impl Default for Conversation {
             show_delete_conv_ui: false,
             delete: false,
             rename_text: "".to_owned(),
+            uuid: Uuid::new_v4(),
             max_tokens: 500,
             temperature: 0,
             seed: rand::thread_rng().gen_range(1000..=9999),
@@ -264,7 +269,7 @@ impl Message {
     }
 }
 
-// This is horrible too (Anrgy emoji).
+// This is horrible too (Angy emoji).
 // I have to make a new struct for serializing data to send to the AI.
 // I could have used the [Conversation] struct and serialize that, but when serializing fields that the AI doesn't need, it gets angry and errors.
 // I could have put a #[serde(skip_serialize)] attribute, but it would skip serializing fields I wanted to save to a json file.

@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use std::{env, fs};
 
-use home::home_dir;
+use dirs::data_dir;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct UserSettings {
@@ -21,7 +21,7 @@ pub struct UserSettings {
 
 impl Default for UserSettings {
     fn default() -> Self {
-        let conv_save_dir = home_dir().unwrap().join("gpt-ui").join("conversations");
+        let conv_save_dir = data_dir().unwrap().join("gpt-ui").join("conversations");
         let address = ServerAddress::default();
 
         UserSettings {
