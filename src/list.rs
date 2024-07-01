@@ -1,7 +1,16 @@
 use uuid::Uuid;
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize, Deserialize)]
 pub struct List {
+    /// The name of the list
     pub list_name: String,
+
+    /// Vector containing the `Conversation`s in this list
     pub convs: Vec<Uuid>,
+
+    /// Mark the list for deletion
+    pub delete: bool,
 }
 
 impl List {
@@ -9,6 +18,7 @@ impl List {
         List {
             list_name: name,
             convs: Vec::new(),
+            delete: false,
         }
     }
 

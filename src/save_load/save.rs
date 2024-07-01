@@ -81,3 +81,22 @@ pub fn save_conversation(mut conv: Conversation, ui_data: &mut GptUi) -> Result<
         }
     }
 }
+
+pub fn save_lists(ui_data: &mut GptUi) {
+    let save_path = ui_data.user_settings.conv_save_location.clone();
+
+    if let Ok(exists) = save_path.try_exists() {
+        if !exists {
+            std::fs::DirBuilder::new()
+                .recursive(true)
+                .create(&save_path)
+                .unwrap();
+        }
+    }
+
+    let json_data = serde_json::to_string(&ui_data.lists).unwrap();
+
+    if let Err(e) = fs::write(save_path.join("gpt-ui_lists.json"), json_data) {
+        eprintln!("Failed to save lists to file: {}", e);
+    }
+}
