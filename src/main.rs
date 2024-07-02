@@ -71,6 +71,7 @@ impl Default for GptUi {
 
 impl eframe::App for GptUi {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        // Delete conversation if it's marked for deletion
         for (i, conv) in self.conversations.clone().iter().enumerate() {
             if conv.delete {
                 if let Some(path) = &conv.file_path {
@@ -79,6 +80,13 @@ impl eframe::App for GptUi {
                 }
 
                 self.conversations.remove(i);
+            }
+        }
+
+        // Delete list if it's marked for deletion
+        for (i, list) in self.lists.clone().iter().enumerate() {
+            if list.delete {
+                self.lists.remove(i);
             }
         }
 
