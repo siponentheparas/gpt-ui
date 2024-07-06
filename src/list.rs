@@ -9,6 +9,12 @@ pub struct List {
     /// Vector containing the `Conversation`s in this list
     pub convs: Vec<Uuid>,
 
+    /// Is the list open or not
+    pub is_open: bool,
+
+    /// In which place is this list in the list of lists
+    pub order_index: usize,
+
     /// Mark the list for deletion
     pub delete: bool,
 }
@@ -18,6 +24,8 @@ impl List {
         List {
             list_name: name,
             convs: Vec::new(),
+            is_open: false,
+            order_index: 0,
             delete: false,
         }
     }

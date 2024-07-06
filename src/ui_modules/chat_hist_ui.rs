@@ -3,6 +3,12 @@ use crate::ui_modules::settings_ui::show_settings;
 use crate::Conversation;
 use crate::GptUi;
 
+use egui::text::LayoutJob;
+use egui::Align;
+use egui::Color32;
+use egui::FontFamily;
+use egui::FontId;
+use egui::TextFormat;
 use egui::{Button, Vec2};
 
 /// Chat history UI
@@ -46,17 +52,44 @@ pub fn show_chat_history(ctx: &egui::Context, ui: &mut egui::Ui, ui_data: &mut G
             // Otherwise the scrollarea will go under the bottom panel.
             .max_height(ui.available_height() - 20.0)
             .show(ui, |ui| {
-
                 // List buttons
-                
+
                 let list_size = Vec2 {
                     x: ui.available_width(),
                     y: 20.0,
                 };
-            
-                for list in &ui_data.lists {
-                    if ui.add_sized(list_size, Button::new("List button")).clicked() {
+
+                for list in &mut ui_data.lists {
+                    let mut layout_job: LayoutJob;
+                    if list.is_open {
+                        layout_job = LayoutJob::simple_singleline(
+                            "<".to_owned(),
+                            FontId::new(14.0, FontFamily::Proportional),
+                            Color32::WHITE,
+                        );
+                    } else {
+                        layout_job = LayoutJob::simple_singleline(
+                            ">".to_owned(),
+                            FontId::new(14.0, FontFamily::Proportional),
+                            Color32::WHITE,
+                        );
+                    };
+
+                    layout_job.append(
+                        &list.list_name,
+                        0.0,
+                        TextFormat {
+                            font_id: FontId::new(14.0, FontFamily::Proportional),
+                            color: Color32::WHITE,
+                            ..Default::default()
+                        },
+                    );
+
+                    layout_job.halign = Align::LEFT;
+
+                    if ui.add_sized(list_size, Button::new(layout_job)).clicked() {
                         println!("List clicked. Name: {}", list.list_name);
+                        list.is_open = !list.is_open;
                     }
                 }
 
