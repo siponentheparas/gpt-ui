@@ -1,6 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 
 mod conversation;
+mod list;
 mod save_load;
 mod ui_modules;
 mod user_settings;
@@ -9,7 +10,8 @@ use std::sync::mpsc::{Receiver, Sender};
 
 use conversation::{Conversation, Message};
 use eframe::egui;
-use save_load::load::load_all;
+use list::List;
+use save_load::{load::load_all, save::save_lists};
 use save_load::save::save_all;
 use ui_modules::{chat_hist_ui, conv_ui};
 use user_settings::UserSettings;
@@ -25,6 +27,7 @@ fn main() -> Result<(), eframe::Error> {
 
 struct GptUi {
     conversations: Vec<Conversation>,
+    lists: Vec<List>,
     tried_loading_convs: bool,
     conversation_selected: bool,
     selected_conversation_index: usize,
@@ -36,17 +39,25 @@ struct GptUi {
 
 impl Default for GptUi {
     fn default() -> Self {
-        let user_settings: UserSettings;
-
-        if let Some(settings) = UserSettings::load() {
-            user_settings = settings;
+        let user_settings = if let Some(settings) = UserSettings::load() {
+            settings
         } else {
-            user_settings = UserSettings::default();
-        }
+            UserSettings::default()
+        };
+
+        let lists: Vec<List> = if let Some(returned_lists) =
+            save_load::load::load_lists(&user_settings.conv_save_location)
+        {
+            println!("Loaded all lists");
+            returned_lists
+        } else {
+            vec![]
+        };
 
         let (tx, rx) = std::sync::mpsc::channel::<(Message, usize)>();
         GptUi {
             conversations: vec![],
+            lists,
             tried_loading_convs: false,
             conversation_selected: false,
             selected_conversation_index: 0,
@@ -60,6 +71,7 @@ impl Default for GptUi {
 
 impl eframe::App for GptUi {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        // Delete conversation if it's marked for deletion
         for (i, conv) in self.conversations.clone().iter().enumerate() {
             if conv.delete {
                 if let Some(path) = &conv.file_path {
@@ -71,16 +83,28 @@ impl eframe::App for GptUi {
             }
         }
 
+        // Delete list if it's marked for deletion
+        for (i, list) in self.lists.clone().iter().enumerate() {
+            if list.delete {
+                self.lists.remove(i);
+            }
+        }
+
         if !self.tried_loading_convs {
             load_all(self);
             self.tried_loading_convs = true;
             println!("Loaded all saved conversations");
         }
 
-        // Save conversations when close has been requested
+        // Save data when close has been requested
         if ctx.input(|i| i.viewport().close_requested()) {
+            // Save conversations
             save_all(self);
-            println!("Saved all conversations, can exit.")
+            println!("Saved all conversations");
+
+            // Save lists
+            save_lists(self);
+            println!("Saved all lists, can exit.")
         }
 
         // Theme

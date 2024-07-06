@@ -1,7 +1,14 @@
+use crate::list::List;
 use crate::ui_modules::settings_ui::show_settings;
 use crate::Conversation;
 use crate::GptUi;
 
+use egui::text::LayoutJob;
+use egui::Align;
+use egui::Color32;
+use egui::FontFamily;
+use egui::FontId;
+use egui::TextFormat;
 use egui::{Button, Vec2};
 
 /// Chat history UI
@@ -28,6 +35,12 @@ pub fn show_chat_history(ctx: &egui::Context, ui: &mut egui::Ui, ui_data: &mut G
                     }
                 }
             }
+
+            if ui.button("New List").clicked() {
+                ui_data.lists.push(List::new("New List".to_owned()));
+
+                println!("new list created!");
+            }
         });
 
         // Chat history scroll area
@@ -39,16 +52,58 @@ pub fn show_chat_history(ctx: &egui::Context, ui: &mut egui::Ui, ui_data: &mut G
             // Otherwise the scrollarea will go under the bottom panel.
             .max_height(ui.available_height() - 20.0)
             .show(ui, |ui| {
+                // List buttons
+
+                let list_size = Vec2 {
+                    x: ui.available_width(),
+                    y: 20.0,
+                };
+
+                for list in &mut ui_data.lists {
+                    let mut layout_job: LayoutJob;
+                    if list.is_open {
+                        layout_job = LayoutJob::simple_singleline(
+                            "<".to_owned(),
+                            FontId::new(14.0, FontFamily::Proportional),
+                            Color32::WHITE,
+                        );
+                    } else {
+                        layout_job = LayoutJob::simple_singleline(
+                            ">".to_owned(),
+                            FontId::new(14.0, FontFamily::Proportional),
+                            Color32::WHITE,
+                        );
+                    };
+
+                    layout_job.append(
+                        &list.list_name,
+                        0.0,
+                        TextFormat {
+                            font_id: FontId::new(14.0, FontFamily::Proportional),
+                            color: Color32::WHITE,
+                            ..Default::default()
+                        },
+                    );
+
+                    layout_job.halign = Align::LEFT;
+
+                    if ui.add_sized(list_size, Button::new(layout_job)).clicked() {
+                        println!("List clicked. Name: {}", list.list_name);
+                        list.is_open = !list.is_open;
+                    }
+                }
+
+                // Conversation buttons
                 // Counter for conversation index.
                 let mut conv_index = 0;
 
+                let conv_button_size = Vec2 {
+                    x: ui.available_width(),
+                    y: 40.0,
+                };
+
                 #[allow(clippy::explicit_counter_loop)]
                 for conv in &ui_data.conversations {
-                    let conv_button_size = Vec2 {
-                        x: ui.available_width(),
-                        y: 40.0,
-                    };
-
                     let button_text = if conv.title == "unnamed" {
                         format!("{}{}", conv.title, conv_index)
                     } else {
